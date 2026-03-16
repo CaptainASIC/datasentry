@@ -1,1 +1,7 @@
 .DS_Store
+
+# Internal project files
+.warp/
+PLANNING.md
+INITIAL.md
+TASKS.md
