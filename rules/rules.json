@@ -1,0 +1,418 @@
+{
+  "version": "0.1.0",
+  "description": "DataSentry curated rule set. Ported and hardened from the Warp ADE Enterprise Privacy Rules (docs/WARP.md). Severity drives activation level: essential=critical, standard=+high, strict=+medium/low, paranoid=+noisy.",
+  "rules": [
+    {
+      "id": "pem-private-key",
+      "name": "PEM private key block",
+      "category": "credentials",
+      "severity": "critical",
+      "pattern": "-----BEGIN[ A-Z]*PRIVATE KEY(?: BLOCK)?-----(?:[\\s\\S]*?-----END[ A-Z]*PRIVATE KEY(?: BLOCK)?-----)?"
+    },
+    {
+      "id": "aws-access-key-id",
+      "name": "AWS access key ID",
+      "category": "cloud",
+      "severity": "critical",
+      "pattern": "\\b(?:AKIA|ASIA|AROA|AIDA)[A-Z0-9]{16}\\b"
+    },
+    {
+      "id": "aws-secret-access-key",
+      "name": "AWS secret access key",
+      "category": "cloud",
+      "severity": "critical",
+      "pattern": "(?i)aws[_-]?secret[_-]?access[_-]?key[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9+/=]{40}"
+    },
+    {
+      "id": "github-token",
+      "name": "GitHub token",
+      "category": "devops",
+      "severity": "critical",
+      "pattern": "\\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36,251}\\b"
+    },
+    {
+      "id": "github-fine-grained-pat",
+      "name": "GitHub fine-grained PAT",
+      "category": "devops",
+      "severity": "critical",
+      "pattern": "\\bgithub_pat_[A-Za-z0-9_]{22,255}\\b"
+    },
+    {
+      "id": "gitlab-pat",
+      "name": "GitLab personal access token",
+      "category": "devops",
+      "severity": "critical",
+      "pattern": "\\bglpat-[A-Za-z0-9_-]{20,}\\b"
+    },
+    {
+      "id": "slack-token",
+      "name": "Slack token",
+      "category": "saas",
+      "severity": "critical",
+      "pattern": "\\bxox[abposr]-[A-Za-z0-9-]{10,}\\b"
+    },
+    {
+      "id": "slack-app-token",
+      "name": "Slack app token",
+      "category": "saas",
+      "severity": "critical",
+      "pattern": "\\bxapp-\\d-[A-Za-z0-9_-]{10,}\\b"
+    },
+    {
+      "id": "slack-webhook-url",
+      "name": "Slack webhook URL",
+      "category": "saas",
+      "severity": "critical",
+      "pattern": "https://hooks\\.slack\\.com/services/T[A-Za-z0-9]+/B[A-Za-z0-9]+/[A-Za-z0-9]+"
+    },
+    {
+      "id": "discord-webhook-url",
+      "name": "Discord webhook URL",
+      "category": "saas",
+      "severity": "critical",
+      "pattern": "https://discord(?:app)?\\.com/api/webhooks/\\d+/[A-Za-z0-9_.-]+"
+    },
+    {
+      "id": "stripe-live-key",
+      "name": "Stripe live key",
+      "category": "saas",
+      "severity": "critical",
+      "pattern": "\\b[srp]k_live_[A-Za-z0-9]{16,}\\b"
+    },
+    {
+      "id": "anthropic-api-key",
+      "name": "Anthropic API key",
+      "category": "ai",
+      "severity": "critical",
+      "pattern": "\\bsk-ant-[A-Za-z0-9_-]{24,}\\b"
+    },
+    {
+      "id": "openai-api-key",
+      "name": "OpenAI API key",
+      "category": "ai",
+      "severity": "critical",
+      "pattern": "\\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{32,}\\b"
+    },
+    {
+      "id": "google-api-key",
+      "name": "Google API key",
+      "category": "cloud",
+      "severity": "critical",
+      "pattern": "\\bAIza[0-9A-Za-z_-]{35}\\b"
+    },
+    {
+      "id": "sendgrid-api-key",
+      "name": "SendGrid API key",
+      "category": "saas",
+      "severity": "critical",
+      "pattern": "\\bSG\\.[A-Za-z0-9_-]{16,32}\\.[A-Za-z0-9_-]{16,64}\\b"
+    },
+    {
+      "id": "npm-token",
+      "name": "npm access token",
+      "category": "devops",
+      "severity": "critical",
+      "pattern": "\\bnpm_[A-Za-z0-9]{36}\\b"
+    },
+    {
+      "id": "pypi-token",
+      "name": "PyPI API token",
+      "category": "devops",
+      "severity": "critical",
+      "pattern": "\\bpypi-AgEIcHlwaS5vcmc[A-Za-z0-9_-]{20,}\\b"
+    },
+    {
+      "id": "huggingface-token",
+      "name": "Hugging Face token",
+      "category": "ai",
+      "severity": "critical",
+      "pattern": "\\bhf_[A-Za-z0-9]{30,}\\b"
+    },
+    {
+      "id": "vault-token",
+      "name": "HashiCorp Vault token",
+      "category": "devops",
+      "severity": "critical",
+      "pattern": "\\bhvs\\.[A-Za-z0-9_-]{24,}\\b"
+    },
+    {
+      "id": "age-secret-key",
+      "name": "age encryption secret key",
+      "category": "credentials",
+      "severity": "critical",
+      "pattern": "\\bAGE-SECRET-KEY-1[A-Z0-9]{58}\\b"
+    },
+    {
+      "id": "db-uri-credentials",
+      "name": "Credentialed database/service URI",
+      "category": "database",
+      "severity": "critical",
+      "pattern": "\\b(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\\+srv)?|redis|rediss|amqp|amqps|mssql|ftp|sftp)://[^\\s:@/]+:[^\\s@/]+@[^\\s\"']+"
+    },
+    {
+      "id": "jwt",
+      "name": "JSON Web Token",
+      "category": "auth",
+      "severity": "critical",
+      "pattern": "\\beyJ[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}\\b"
+    },
+    {
+      "id": "root-admin-credential",
+      "name": "Root/admin/master credential assignment",
+      "category": "credentials",
+      "severity": "critical",
+      "pattern": "(?i)\\b(?:root[_-]?password|admin[_-]?password|master[_-]?key|superuser[_-]?password)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9!@#$%^&*_+=-]{6,}"
+    },
+    {
+      "id": "seed-phrase",
+      "name": "Wallet seed/mnemonic phrase",
+      "category": "web3",
+      "severity": "critical",
+      "pattern": "(?i)\\b(?:seed[_-]?phrase|mnemonic(?:[_-]?phrase)?|recovery[_-]?phrase)\\b[\"'\\s]*[:=]\\s*[\"']?(?:[a-z]+ ){11,23}[a-z]+"
+    },
+    {
+      "id": "eth-private-key",
+      "name": "Ethereum/wallet private key assignment",
+      "category": "web3",
+      "severity": "critical",
+      "pattern": "(?i)\\b(?:eth(?:ereum)?[_-]?private[_-]?key|wallet[_-]?private[_-]?key|private[_-]?key)\\b[\"'\\s]*[:=]\\s*[\"']?(?:0x)?[a-fA-F0-9]{64}\\b"
+    },
+    {
+      "id": "ansible-vault",
+      "name": "Ansible Vault payload",
+      "category": "devops",
+      "severity": "critical",
+      "pattern": "\\$ANSIBLE_VAULT;[0-9.]+;AES\\d+\\n(?:[0-9a-f]{16,}\\n?)+"
+    },
+    {
+      "id": "twilio-api-key",
+      "name": "Twilio API key SID",
+      "category": "saas",
+      "severity": "high",
+      "pattern": "\\bSK[a-f0-9]{32}\\b"
+    },
+    {
+      "id": "generic-api-key",
+      "name": "Generic API key/token assignment",
+      "category": "credentials",
+      "severity": "high",
+      "pattern": "(?i)\\b(?:api[_-]?key|apikey|access[_-]?token|auth[_-]?token|bearer[_-]?token|secret[_-]?key|client[_-]?secret|service[_-]?key)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9+/=_-]{16,}"
+    },
+    {
+      "id": "generic-password",
+      "name": "Password assignment",
+      "category": "credentials",
+      "severity": "high",
+      "pattern": "(?i)\\b(?:password|passwd|pwd|passphrase)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9!@#$%^&*_+=-]{8,}"
+    },
+    {
+      "id": "authorization-header",
+      "name": "Authorization header value",
+      "category": "auth",
+      "severity": "high",
+      "pattern": "(?i)\\bauthorization\\b[\"'\\s]*[:=]\\s*[\"']?(?:bearer|basic|token)\\s+[A-Za-z0-9+/=_.~-]{16,}"
+    },
+    {
+      "id": "ssn",
+      "name": "US Social Security Number",
+      "category": "pii",
+      "severity": "high",
+      "pattern": "\\b(?!000|666|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0000)\\d{4}\\b"
+    },
+    {
+      "id": "credit-card",
+      "name": "Payment card number",
+      "category": "financial",
+      "severity": "high",
+      "pattern": "\\b(?:4\\d{3}|5[1-5]\\d{2}|3[47]\\d{2}|6(?:011|5\\d{2}))(?:[ -]?\\d{4}){2}[ -]?\\d{1,4}\\b"
+    },
+    {
+      "id": "canadian-sin",
+      "name": "Canadian Social Insurance Number",
+      "category": "pii",
+      "severity": "high",
+      "pattern": "(?i)\\b(?:sin|social[_-]?insurance(?:[_-]?number)?)\\b[\"'\\s]*[:=]\\s*[\"']?\\d{3}[- ]?\\d{3}[- ]?\\d{3}\\b"
+    },
+    {
+      "id": "ci-cd-token",
+      "name": "CI/CD platform token assignment",
+      "category": "devops",
+      "severity": "high",
+      "pattern": "(?i)\\b(?:(?:gitlab|jenkins|terraform|tf|pulumi|circleci|travis|drone|argo)[_-]?(?:ci[_-]?)?token|ci[_-]?token|pipeline[_-]?token|deploy[_-]?token|registry[_-]?token|actions[_-]?token)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9+/=_.-]{12,}"
+    },
+    {
+      "id": "container-secret",
+      "name": "Kubernetes/Docker secret assignment",
+      "category": "devops",
+      "severity": "high",
+      "pattern": "(?i)\\b(?:k8s|kube(?:rnetes)?|docker|harbor|helm)[_-]?(?:secret|token|password)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9+/=_.-]{8,}"
+    },
+    {
+      "id": "azure-client-secret",
+      "name": "Azure client secret assignment",
+      "category": "cloud",
+      "severity": "high",
+      "pattern": "(?i)\\bazure[_-]?(?:client[_-]?)?secret\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9~._-]{30,}"
+    },
+    {
+      "id": "oauth-session-token",
+      "name": "OAuth/refresh/CSRF token assignment",
+      "category": "auth",
+      "severity": "high",
+      "pattern": "(?i)\\b(?:oauth[_-]?token|refresh[_-]?token|id[_-]?token|csrf[_-]?token|xsrf[_-]?token)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9+/=_.-]{16,}"
+    },
+    {
+      "id": "db-password",
+      "name": "Database password assignment",
+      "category": "database",
+      "severity": "high",
+      "pattern": "(?i)\\b(?:db|database|postgres|mysql|mongo|redis)[_-]?(?:pass(?:word)?|pwd)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9!@#$%^&*_+=-]{6,}"
+    },
+    {
+      "id": "connection-string",
+      "name": "Connection string assignment",
+      "category": "database",
+      "severity": "high",
+      "pattern": "(?i)\\b(?:connection[_-]?string|database[_-]?url|db[_-]?url)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9+/:@._-]{20,}"
+    },
+    {
+      "id": "iban",
+      "name": "IBAN",
+      "category": "financial",
+      "severity": "medium",
+      "pattern": "\\b[A-Z]{2}\\d{2}(?: ?[A-Z0-9]{4}){3,7}\\b"
+    },
+    {
+      "id": "email-assignment",
+      "name": "Email address assignment",
+      "category": "pii",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:email|e-mail)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+    },
+    {
+      "id": "phone-assignment",
+      "name": "Phone number assignment",
+      "category": "pii",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:phone|mobile|cell|tel)\\b[\"'\\s]*[:=]\\s*[\"']?\\+?[0-9][0-9 ().-]{7,18}[0-9]"
+    },
+    {
+      "id": "dob-assignment",
+      "name": "Date of birth assignment",
+      "category": "pii",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:dob|date[_-]?of[_-]?birth|birth[_-]?date)\\b[\"'\\s]*[:=]\\s*[\"']?\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}"
+    },
+    {
+      "id": "medical-record-number",
+      "name": "Medical record / patient ID assignment",
+      "category": "healthcare",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:mrn|medical[_-]?record[_-]?number|patient[_-]?id)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9-]{6,20}"
+    },
+    {
+      "id": "insurance-member-id",
+      "name": "Insurance/member ID assignment",
+      "category": "healthcare",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:insurance[_-]?number|policy[_-]?number|member[_-]?id|health[_-]?card|ohip|ramq)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9-]{6,20}"
+    },
+    {
+      "id": "passport-or-license",
+      "name": "Passport / driver's license assignment",
+      "category": "pii",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:passport[_-]?(?:number|id)|driver[_-]?licen[cs]e|dl[_-]?number)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9-]{5,20}"
+    },
+    {
+      "id": "bank-account-routing",
+      "name": "Bank account / routing number assignment",
+      "category": "financial",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:routing[_-]?number|aba[_-]?number|account[_-]?number|bank[_-]?account)\\b[\"'\\s]*[:=]\\s*[\"']?\\d{6,17}\\b"
+    },
+    {
+      "id": "swift-bic",
+      "name": "SWIFT/BIC code assignment",
+      "category": "financial",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:swift[_-]?code|bic(?:[_-]?code)?)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?\\b"
+    },
+    {
+      "id": "tax-id",
+      "name": "Tax ID / EIN assignment",
+      "category": "financial",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:tax[_-]?id|ein)\\b[\"'\\s]*[:=]\\s*[\"']?\\d{2}-?\\d{7}\\b"
+    },
+    {
+      "id": "security-clearance",
+      "name": "Security clearance level assignment",
+      "category": "government",
+      "severity": "medium",
+      "pattern": "(?i)\\b(?:security[_-]?clearance|clearance[_-]?level)\\b[\"'\\s]*[:=]\\s*[\"']?(?:top[_-]?secret|secret|confidential|ts[_-]?sci)"
+    },
+    {
+      "id": "session-id",
+      "name": "Session ID assignment",
+      "category": "auth",
+      "severity": "low",
+      "pattern": "(?i)\\b(?:session[_-]?id|jsessionid)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9+/=_-]{16,}"
+    },
+    {
+      "id": "license-key",
+      "name": "License/product key assignment",
+      "category": "enterprise",
+      "severity": "low",
+      "pattern": "(?i)\\b(?:license[_-]?key|product[_-]?key|activation[_-]?key)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9-]{16,}"
+    },
+    {
+      "id": "private-ipv4",
+      "name": "Private IPv4 address",
+      "category": "network",
+      "severity": "low",
+      "noisy": true,
+      "pattern": "\\b(?:10\\.|172\\.(?:1[6-9]|2\\d|3[01])\\.|192\\.168\\.)\\d{1,3}\\.\\d{1,3}\\b"
+    },
+    {
+      "id": "ipv4-any",
+      "name": "Any IPv4 address",
+      "category": "network",
+      "severity": "low",
+      "noisy": true,
+      "pattern": "\\b(?:(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\b"
+    },
+    {
+      "id": "mac-address",
+      "name": "MAC address",
+      "category": "network",
+      "severity": "low",
+      "noisy": true,
+      "pattern": "\\b[0-9A-Fa-f]{2}(?:[:-][0-9A-Fa-f]{2}){5}\\b"
+    },
+    {
+      "id": "email-any",
+      "name": "Any email address",
+      "category": "pii",
+      "severity": "low",
+      "noisy": true,
+      "pattern": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b"
+    },
+    {
+      "id": "eth-address",
+      "name": "Ethereum address",
+      "category": "web3",
+      "severity": "low",
+      "noisy": true,
+      "pattern": "\\b0x[a-fA-F0-9]{40}\\b"
+    },
+    {
+      "id": "btc-address",
+      "name": "Bitcoin address",
+      "category": "web3",
+      "severity": "low",
+      "noisy": true,
+      "pattern": "\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b"
+    }
+  ]
+}
