@@ -191,10 +191,13 @@ def handle_user_prompt(payload: dict, rules: list, allowlist: list, config: dict
             {
                 "decision": "block",
                 "reason": (
-                    "DataSentry blocked this prompt: detected "
-                    f"{rule_names(hits, rules)}. "
-                    "Remove the secret (or replace it with a placeholder) and "
-                    "resubmit. Adjust protection with /datasentry."
+                    "🛡️  DataSentry: PROMPT BLOCKED — detected "
+                    f"{rule_names(hits, rules)}.\n"
+                    "Your message was NOT sent to the model. Remove the "
+                    "secret (or swap in a placeholder like <MY_API_KEY>) and "
+                    "resubmit.\n"
+                    "Tune protection with /datasentry, or disable with "
+                    "/datasentry off."
                 ),
             }
         )
