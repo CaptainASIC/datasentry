@@ -1,0 +1,28 @@
+{
+  "description": "DataSentry secret redaction: blocks prompts containing secrets and redacts secrets from tool outputs before the model sees them.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/datasentry.py\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/datasentry.py\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

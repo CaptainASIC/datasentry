@@ -1,0 +1,20 @@
+{
+  "name": "datasentry",
+  "owner": {
+    "name": "Captain ASIC",
+    "url": "https://github.com/CaptainASIC"
+  },
+  "metadata": {
+    "description": "DataSentry — secret redaction and privacy tooling for Claude Code",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "datasentry",
+      "source": "./",
+      "description": "Deterministic secret redaction via hooks: blocks prompts containing secrets, redacts tool outputs before the model sees them. Severity-tiered protection levels configured with /datasentry.",
+      "category": "security",
+      "keywords": ["security", "secrets", "redaction", "privacy"]
+    }
+  ]
+}
