@@ -197,6 +197,17 @@ class RedactionTests(unittest.TestCase):
         out = json.loads(proc.stdout)
         self.assertEqual(out.get("decision"), "block")
 
+    def test_prose_form_api_key_blocked(self):
+        # "my api key is X" — spaced compound, "is" separator. Field-tested gap.
+        result = run_hook(user_prompt("lets test, my api key is sk-1234asdf989j923j982j89"))
+        self.assertIsNotNone(result)
+        self.assertEqual(result["decision"], "block")
+
+    def test_prose_short_values_not_blocked(self):
+        # "api key is required/invalid" must never trip the prose separator.
+        self.assertIsNone(run_hook(user_prompt("the api key is required for auth")))
+        self.assertIsNone(run_hook(user_prompt("my password is wrong")))
+
     def test_authorization_header_redacted(self):
         result = run_hook(
             post_tool_use('curl -H "Authorization: Bearer abc123def456ghi789jkl"')

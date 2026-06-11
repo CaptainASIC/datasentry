@@ -18,7 +18,7 @@ DataSentry is a Claude Code plugin that keeps secrets out of your model context.
 /plugin install datasentry@datasentry
 ```
 
-Requires `python3` on PATH (stdlib only, no dependencies).
+Requires `python3` on PATH (stdlib only, no dependencies). **If `python3` is missing, the hooks cannot run and redaction is silently inactive** — a SessionStart check warns you loudly in every session where that is the case.
 
 ## Configure
 

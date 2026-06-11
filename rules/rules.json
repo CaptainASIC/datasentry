@@ -196,14 +196,14 @@
       "name": "Generic API key/token assignment",
       "category": "credentials",
       "severity": "high",
-      "pattern": "(?i)\\b(?:api[_-]?key|apikey|access[_-]?token|auth[_-]?token|bearer[_-]?token|secret[_-]?key|client[_-]?secret|service[_-]?key)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9+/=_-]{16,}"
+      "pattern": "(?i)\\b(?:api[\\s_-]?key|apikey|access[\\s_-]?token|auth[\\s_-]?token|bearer[\\s_-]?token|secret[\\s_-]?key|client[\\s_-]?secret|service[\\s_-]?key)\\b[\"'\\s]*(?:[:=]|\\bis\\b|\\bwas\\b)\\s*[\"']?[A-Za-z0-9+/=_-]{16,}"
     },
     {
       "id": "generic-password",
       "name": "Password assignment",
       "category": "credentials",
       "severity": "high",
-      "pattern": "(?i)\\b(?:password|passwd|pwd|passphrase)\\b[\"'\\s]*[:=]\\s*[\"']?[A-Za-z0-9!@#$%^&*_+=-]{8,}"
+      "pattern": "(?i)\\b(?:password|passwd|pwd|passphrase)\\b[\"'\\s]*(?:[:=]|\\bis\\b|\\bwas\\b)\\s*[\"']?[A-Za-z0-9!@#$%^&*_+=-]{8,}"
     },
     {
       "id": "authorization-header",

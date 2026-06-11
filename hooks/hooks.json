@@ -1,6 +1,17 @@
 {
   "description": "DataSentry secret redaction: blocks prompts containing secrets and redacts secrets from tool outputs before the model sees them.",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v python3 >/dev/null 2>&1 || echo '⚠️ DataSentry WARNING: python3 not found on PATH — secret redaction is INACTIVE on this machine. Install Python 3 or uninstall the datasentry plugin.'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [

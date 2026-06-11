@@ -1,0 +1,28 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate manifests and compile all rule patterns
+        run: |
+          python3 - <<'EOF'
+          import json, re
+          for f in ('rules/rules.json', 'hooks/hooks.json',
+                    '.claude-plugin/plugin.json', '.claude-plugin/marketplace.json'):
+              with open(f) as fh:
+                  json.load(fh)
+          with open('rules/rules.json') as fh:
+              rules = json.load(fh)['rules']
+          for r in rules:
+              re.compile(r['pattern'])
+          print(f"{len(rules)} rule patterns compile")
+          EOF
+      - name: Run test suite
+        run: python3 tests/test_datasentry.py
