@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-06-11
+
+### Fixed
+
+- **Tool-output redaction silently failed for structured tool responses**
+  (Read, Bash, and most built-in tools). The engine replaced structured
+  `tool_response` objects with a JSON-dumped string; the harness drops
+  `updatedToolOutput` when its type does not match the original response, so
+  detection fired (additionalContext delivered) but the raw secret still
+  reached the model. The replacement now preserves the original response
+  shape. Verified end-to-end with live headless sessions on both Read and
+  Bash paths.
+
 ## [0.1.1] - 2026-06-11
 
 ### Changed

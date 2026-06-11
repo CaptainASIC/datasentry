@@ -146,13 +146,18 @@ class RedactionTests(unittest.TestCase):
         secret = "AKIAQQQQQQQQQQQQQQQQ"
         self.assertIsNone(run_hook(post_tool_use(secret), level="off"))
 
-    def test_dict_response_redacted(self):
+    def test_dict_response_redacted_preserving_shape(self):
         response = {"stdout": "token: ghp_" + "Z9y8X7w6" * 5, "stderr": "", "exit_code": 0}
         result = run_hook(post_tool_use(response))
         self.assertIsNotNone(result)
         out = result["hookSpecificOutput"]["updatedToolOutput"]
-        self.assertNotIn("ghp_Z9y8X7w6", out)
-        self.assertIn("exit_code", out, "structure must be preserved in JSON form")
+        # The harness silently drops updatedToolOutput if its type does not
+        # match the original tool_response — a dict must stay a dict.
+        self.assertIsInstance(out, dict)
+        self.assertNotIn("ghp_Z9y8X7w6", out["stdout"])
+        self.assertIn("[DS:github-token:", out["stdout"])
+        self.assertEqual(out["exit_code"], 0)
+        self.assertEqual(out["stderr"], "")
 
     def test_custom_rule(self):
         result = run_hook(

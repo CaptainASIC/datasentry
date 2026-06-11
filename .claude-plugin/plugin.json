@@ -1,6 +1,6 @@
 {
   "name": "datasentry",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Warp-style secret redaction for Claude Code. Deterministic hook-based engine: blocks prompts containing secrets, redacts secrets from tool outputs before the model sees them. Curated regex rule set with severity-tiered protection levels.",
   "author": {
     "name": "Captain ASIC",

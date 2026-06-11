@@ -209,14 +209,10 @@ def handle_post_tool_use(payload: dict, rules: list, allowlist: list, config: di
     if response is None:
         return
     hits = {}
-    if isinstance(response, str):
-        redacted = scan_obj(response, rules, allowlist, hits)
-        replacement = redacted
-    else:
-        redacted = scan_obj(response, rules, allowlist, hits)
-        if not hits:
-            return
-        replacement = json.dumps(redacted, ensure_ascii=False)
+    # Preserve the original response type: structured tool responses (Read,
+    # Bash, ...) must be replaced with the same shape or the harness drops
+    # the update silently.
+    replacement = scan_obj(response, rules, allowlist, hits)
     if not hits:
         return
     audit(config, payload, hits, "redacted-output")
