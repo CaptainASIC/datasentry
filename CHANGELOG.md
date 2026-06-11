@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] - 2026-06-11
+
+### Changed
+
+- Attribution corrected: the regex ruleset was authored by Captain ASIC for
+  use with Warp ADE's custom-pattern settings — it is not Warp's ruleset.
+  Only the redaction *approach* is inspired by Warp's feature. README and
+  rules.json wording fixed.
+
 ## [0.1.3] - 2026-06-11
 
 ### Added
@@ -49,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Claude Code plugin: deterministic secret redaction via hooks.
   - `PostToolUse` hook redacts secrets from all tool outputs (`updatedToolOutput`) before the model sees them.
   - `UserPromptSubmit` hook blocks prompts containing secrets.
-- Curated rule set (`rules/rules.json`): 58 rules ported and hardened from the Warp ADE Enterprise Privacy Rules, with id/name/category/severity metadata and `noisy` flags.
+- Curated rule set (`rules/rules.json`): 58 rules ported and hardened from Captain ASIC's original enterprise privacy ruleset (written for Warp ADE), with id/name/category/severity metadata and `noisy` flags.
 - Protection levels: `off`, `essential`, `standard` (default), `strict`, `paranoid`.
 - `/datasentry` command: interactive wizard, `status`, `test`, `level <name>`, `off`.
 - Config at `~/.claude/datasentry/config.json`: level, category overrides, custom rules, allowlist, fail mode (`closed` default), audit log.

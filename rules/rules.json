@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "description": "DataSentry curated rule set. Ported and hardened from the Warp ADE Enterprise Privacy Rules (docs/WARP.md). Severity drives activation level: essential=critical, standard=+high, strict=+medium/low, paranoid=+noisy.",
+  "description": "DataSentry curated rule set. Authored by Captain ASIC; ported and hardened from his original enterprise privacy ruleset written for Warp ADE (docs/WARP.md). Severity drives activation level: essential=critical, standard=+high, strict=+medium/low, paranoid=+noisy.",
   "rules": [
     {
       "id": "pem-private-key",

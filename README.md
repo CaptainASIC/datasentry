@@ -74,9 +74,9 @@ Placeholders are stable per secret value (`sha1[:4]`), so the same key always re
 
 ## Rule set
 
-58 curated rules in [rules/rules.json](rules/rules.json), ported and hardened from the original [Warp ADE Enterprise Privacy Rules](docs/WARP.md) that this repo previously contained. Each rule has an id, name, category, severity, and optional `noisy` flag.
+58 curated rules in [rules/rules.json](rules/rules.json), ported and hardened from [Captain ASIC's original enterprise privacy ruleset](docs/WARP.md) — hand-written regex patterns this repo previously published for use with Warp ADE's custom secret-redaction settings. Each rule has an id, name, category, severity, and optional `noisy` flag.
 
-Several patterns from the original document were **deliberately excluded** because they would destroy usability:
+Several patterns from the original ruleset were **deliberately excluded** because they would destroy usability:
 
 | Excluded pattern | Why |
 |---|---|
@@ -112,4 +112,4 @@ python3 tests/test_datasentry.py    # 21 tests, subprocess-level, no deps
 
 ## Credits & License
 
-GPL-3.0 © Captain ASIC. Inspired by [Warp](https://www.warp.dev/)'s secret redaction. Original Warp regex ruleset preserved at [docs/WARP.md](docs/WARP.md).
+GPL-3.0 © Captain ASIC. Redaction approach inspired by [Warp](https://www.warp.dev/)'s secret redaction feature; all regex rules authored by Captain ASIC. The original hand-written ruleset (written for Warp ADE's custom-pattern settings) is preserved at [docs/WARP.md](docs/WARP.md).
