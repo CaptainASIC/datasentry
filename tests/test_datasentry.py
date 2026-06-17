@@ -219,5 +219,75 @@ class RedactionTests(unittest.TestCase):
         )
 
 
+def seed_audit(home):
+    """Write a known audit.jsonl into a DATASENTRY_HOME directory."""
+    rows = [
+        {"ts": "2026-06-17T00:00:00+00:00", "session_id": "s1",
+         "action": "redacted-output", "rules": {"aws-access-key-id": 2}},
+        {"ts": "2026-06-17T00:01:00+00:00", "session_id": "s1",
+         "action": "blocked-prompt", "rules": {"jwt": 1}},
+        {"ts": "2026-06-17T00:02:00+00:00", "session_id": "s2",
+         "action": "redacted-output", "rules": {"aws-access-key-id": 1}},
+    ]
+    with open(os.path.join(home, "audit.jsonl"), "w", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(row) + "\n")
+
+
+def run_stats(home):
+    env = dict(os.environ, DATASENTRY_HOME=home)
+    return subprocess.run(
+        [sys.executable, str(SCRIPT), "--stats"],
+        capture_output=True, text=True, env=env, timeout=30,
+    )
+
+
+def run_session_end(home, session_id):
+    payload = {"hook_event_name": "SessionEnd", "session_id": session_id}
+    env = dict(os.environ, DATASENTRY_HOME=home)
+    return subprocess.run(
+        [sys.executable, str(SCRIPT)],
+        input=json.dumps(payload), capture_output=True, text=True, env=env, timeout=30,
+    )
+
+
+class AuditSummaryTests(unittest.TestCase):
+    def test_stats_summarizes_whole_log(self):
+        """Expected: --stats rolls up totals and top rules across all sessions."""
+        with tempfile.TemporaryDirectory() as tmp:
+            seed_audit(tmp)
+            proc = run_stats(tmp)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertIn("4 secrets caught", proc.stdout)  # 2 + 1 + 1
+            self.assertIn("aws-access-key-id", proc.stdout)
+            self.assertIn("jwt", proc.stdout)
+            self.assertIn("2 sessions", proc.stdout)
+
+    def test_stats_empty_log(self):
+        """Edge: no audit file yet still exits clean with a helpful message."""
+        with tempfile.TemporaryDirectory() as tmp:
+            proc = run_stats(tmp)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertIn("no audit entries", proc.stdout.lower())
+
+    def test_session_end_counts_only_this_session(self):
+        """Expected: SessionEnd tallies only the ending session's entries."""
+        with tempfile.TemporaryDirectory() as tmp:
+            seed_audit(tmp)
+            proc = run_session_end(tmp, "s1")
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertIn("caught 3 secret(s)", proc.stdout)  # s1: 2 aws + 1 jwt
+            self.assertIn("1 prompt(s) blocked", proc.stdout)
+            self.assertNotIn("s2", proc.stdout)
+
+    def test_session_end_silent_for_unknown_session(self):
+        """Failure/edge: a session with no entries prints nothing."""
+        with tempfile.TemporaryDirectory() as tmp:
+            seed_audit(tmp)
+            proc = run_session_end(tmp, "never-logged")
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertEqual(proc.stdout.strip(), "")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

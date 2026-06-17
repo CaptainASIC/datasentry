@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-06-17
+
+### Changed
+
+- **Command is now `/datasentry` instead of `/datasentry:datasentry`.** Moved
+  the command from `commands/datasentry.md` to a root `SKILL.md` with a
+  `name: datasentry` frontmatter field. A plugin's root skill is its default,
+  unnamespaced skill; only skills under `commands/`/`skills/` carry the
+  `plugin:` prefix.
+- Added `displayName: "DataSentry"` to `plugin.json` (shown in the `/plugin`
+  picker; ignored by clients older than Claude Code v2.1.143).
+
+### Added
+
+- `/datasentry stats` — all-time audit summary (`--stats` mode on the engine):
+  total secrets caught, redactions vs blocks, session count, time window, and
+  the top rules tripped. Rule IDs and counts only — never secret values.
+- `SessionEnd` hook prints a one-line per-session tally of what was redacted
+  and blocked, for at-a-glance trust.
+- CI now runs `claude plugin validate . --strict` to catch manifest and
+  frontmatter schema regressions.
+
 ## [0.1.4] - 2026-06-11
 
 ### Changed

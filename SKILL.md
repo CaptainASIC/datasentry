@@ -1,6 +1,7 @@
 ---
+name: datasentry
 description: Configure DataSentry secret redaction (level, categories, fail mode, audit log)
-argument-hint: "[status|test|level <name>|off]"
+argument-hint: "[status|stats|test|level <name>|off]"
 allowed-tools: ["Read", "Write", "Bash", "AskUserQuestion", "Glob"]
 ---
 
@@ -21,9 +22,13 @@ Arguments given: "$ARGUMENTS"
   `~/.claude/datasentry/audit.jsonl` if it exists. Concise table.
 - **`test`** — Run a live check: pipe a synthetic PostToolUse payload
   containing a FAKE secret (e.g. `AKIAIOSFODNN7EXAMPLE0` — note: must NOT
-  contain the word "example" since allowlisted; use `AKIAQQQQQQQQQQQQQQQQ`)
+  contain the word "example" since allowlisted; use `[DS:aws-access-key-id:2599]`)
   through the script with Bash and confirm it emits `updatedToolOutput` with a
   `[DS:...]` placeholder. Report pass/fail with the actual output.
+- **`stats`** — Run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/datasentry.py" --stats`
+  with Bash and relay its output verbatim. It summarizes the whole audit log:
+  total secrets caught, redactions vs blocks, session count, time window, and
+  the top rules tripped (rule IDs and counts only — never values).
 - **`level <name>`** or **`off`** — Set `level` directly (one of: off,
   essential, standard, strict, paranoid), preserving other config keys. Write
   the file and confirm.

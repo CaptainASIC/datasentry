@@ -180,6 +180,93 @@ def rule_names(hits: dict, rules: list) -> str:
     return ", ".join(sorted(by_id.get(rid, rid) for rid in hits))
 
 
+def read_audit() -> list:
+    """Read all audit entries; empty list if the log is missing/unreadable."""
+    entries = []
+    try:
+        with open(state_dir() / "audit.jsonl", encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entries.append(json.loads(line))
+                except ValueError:
+                    continue  # skip a corrupt line, never crash the summary
+    except OSError:
+        pass
+    return entries
+
+
+def aggregate(entries: list) -> dict:
+    """Roll audit entries up into totals and per-rule hit counts."""
+    redactions = blocks = 0
+    rule_counts: dict = {}
+    sessions = set()
+    for entry in entries:
+        sessions.add(entry.get("session_id"))
+        for rid, count in (entry.get("rules") or {}).items():
+            rule_counts[rid] = rule_counts.get(rid, 0) + count
+        if entry.get("action") == "blocked-prompt":
+            blocks += 1
+        else:
+            redactions += 1
+    return {
+        "events": len(entries),
+        "redactions": redactions,
+        "blocks": blocks,
+        "sessions": len([s for s in sessions if s]),
+        "total_hits": sum(rule_counts.values()),
+        "rule_counts": rule_counts,
+    }
+
+
+def top_rules(rule_counts: dict, limit: int) -> list:
+    """Rule ids sorted by descending hit count, ties broken by id."""
+    return sorted(rule_counts.items(), key=lambda kv: (-kv[1], kv[0]))[:limit]
+
+
+def print_stats() -> int:
+    """Print an all-time summary of the audit log to stdout (for /datasentry stats)."""
+    entries = read_audit()
+    if not entries:
+        print(
+            "🛡️  DataSentry: no audit entries yet "
+            f"({state_dir() / 'audit.jsonl'}). Nothing redacted, or audit_log is off."
+        )
+        return 0
+    agg = aggregate(entries)
+    lines = [
+        "🛡️  DataSentry audit summary",
+        f"  {agg['total_hits']} secrets caught across {agg['events']} events "
+        f"({agg['redactions']} tool outputs redacted, {agg['blocks']} prompts blocked) "
+        f"in {agg['sessions']} sessions",
+        f"  window: {entries[0].get('ts', '?')} → {entries[-1].get('ts', '?')}",
+        "  top rules:",
+    ]
+    for rid, count in top_rules(agg["rule_counts"], 10):
+        lines.append(f"    {count:>5}  {rid}")
+    print("\n".join(lines))
+    return 0
+
+
+def handle_session_end(payload: dict):
+    """Print a one-line tally of what was redacted this session, if anything."""
+    session_id = payload.get("session_id")
+    entries = [e for e in read_audit() if e.get("session_id") == session_id]
+    if not entries:
+        return
+    agg = aggregate(entries)
+    names = ", ".join(rid for rid, _ in top_rules(agg["rule_counts"], 3))
+    print(
+        f"🛡️  DataSentry: this session caught {agg['total_hits']} secret(s) — "
+        f"{agg['redactions']} tool output(s) redacted, "
+        f"{agg['blocks']} prompt(s) blocked"
+        + (f" (top: {names})" if names else "")
+        + "."
+    )
+
+
 def handle_user_prompt(payload: dict, rules: list, allowlist: list, config: dict):
     prompt = payload.get("prompt") or ""
     _, hits = scan(prompt, rules, allowlist)
@@ -239,9 +326,15 @@ _EVENT = "unknown"
 
 def main() -> int:
     global _EVENT
+    if "--stats" in sys.argv[1:]:
+        return print_stats()
     payload = json.load(sys.stdin)
     _EVENT = event = payload.get("hook_event_name", "")
     config = load_config()
+    # Session summary reports historical audit data regardless of level.
+    if event == "SessionEnd":
+        handle_session_end(payload)
+        return 0
     if config["level"] == "off":
         return 0
     rules = load_rules(config)
