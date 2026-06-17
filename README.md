@@ -3,7 +3,7 @@
 **Warp-style secret redaction for Claude Code.**
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Version](https://img.shields.io/badge/Version-0.1.0-green.svg)](https://github.com/CaptainASIC/datasentry)
+[![Version](https://img.shields.io/badge/Version-0.2.0-green.svg)](https://github.com/CaptainASIC/datasentry)
 
 DataSentry is a Claude Code plugin that keeps secrets out of your model context. It runs as a deterministic hook — not a model instruction — on every prompt and every tool call, in every session:
 
@@ -25,6 +25,7 @@ Requires `python3` on PATH (stdlib only, no dependencies). **If `python3` is mis
 ```
 /datasentry            # interactive wizard
 /datasentry status     # current level, active rule count, recent audit entries
+/datasentry stats      # all-time audit summary: totals, top rules, time window
 /datasentry test       # live end-to-end check with a fake secret
 /datasentry level strict
 /datasentry off
@@ -68,6 +69,7 @@ Per-category overrides (`"categories": {"pii": false}`), custom rules, and a val
 |---|---|
 | Tool results (Read, Bash, Grep, MCP, …) | `PostToolUse` hook replaces the result via `updatedToolOutput` before the model sees it |
 | User prompts | `UserPromptSubmit` hook blocks the prompt (hooks cannot rewrite prompts) |
+| Session summary | `SessionEnd` hook prints a one-line tally of what was caught this session |
 | Persistence | Plugin hooks are merged into every session; config is read per invocation |
 
 Placeholders are stable per secret value (`sha1[:4]`), so the same key always redacts to the same token — the model can reference and preserve them when editing files without ever seeing the value.
@@ -99,7 +101,7 @@ Several patterns from the original ruleset were **deliberately excluded** becaus
 ## Development
 
 ```
-python3 tests/test_datasentry.py    # 21 tests, subprocess-level, no deps
+python3 tests/test_datasentry.py    # 27 tests, subprocess-level, no deps
 ```
 
 ## Roadmap (phase 2)
