@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "DataSentry — secret redaction and privacy tooling for Claude Code",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "plugins": [
     {

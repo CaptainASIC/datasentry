@@ -77,6 +77,14 @@ class RedactionTests(unittest.TestCase):
         result = run_hook(post_tool_use(f"remote: {secret}@github.com"))
         self.assert_redacted(result, secret)
 
+    def test_snyk_token_redacted(self):
+        # Snyk tokens are UUIDs; only redact when anchored to a snyk key name.
+        token = "11111111-2222-4333-8444-555555555555"
+        result = run_hook(post_tool_use(f"SNYK_TOKEN={token}"))
+        self.assert_redacted(result, token, "snyk-token")
+        # A bare UUID with no snyk context must not trip this rule.
+        self.assertIsNone(run_hook(post_tool_use(f"request id {token}")))
+
     def test_anthropic_key_blocks_prompt(self):
         secret = "sk-ant-api03-" + "Qq7Rr8Ss9" * 5
         result = run_hook(user_prompt(f"use this key: {secret}"))
